@@ -12,6 +12,7 @@ externalDocs:
   url: https://github.com/samuelastech/books-api
 
 servers:
+  - url: https://books-api-1ogb.onrender.com
   - url: http://localhost:3000
 
 tags:
@@ -82,6 +83,12 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/BookId'
                   - $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid ID param
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidIdParam'
         
     patch:
       tags:
@@ -101,11 +108,20 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: 'You must send properties to be updated'
+                oneOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: 'You must send properties to be updated'
+                  - $ref: '#/components/schemas/InvalidIdParam'
+              examples:
+                invalidBody:
+                  summary: 'Invalid body'
+                  value:
+                    message: 'You must send properties to be updated'
+                invalidIdParam:
+                  $ref: '#/components/examples/InvalidIdParam'
     
     delete:
       tags:
@@ -116,7 +132,22 @@ paths:
           description: Book deleted successfully
         '400':
           description: Invalid properties
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidIdParam'
+              examples:
+                Void:
+                  summary: 'Void'
+                  value: null
+                invalidIdParam:
+                  $ref: '#/components/examples/InvalidIdParam'
 components:
+  examples:
+    InvalidIdParam:
+      summary: 'Invalid ID param'
+      value:
+        message: 'The ID param is invalid'
   parameters:
     BookParam:
       name: id
@@ -160,3 +191,10 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Book'
+    
+    InvalidIdParam:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'The ID param is invalid'
