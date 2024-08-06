@@ -1,0 +1,163 @@
+openapi: 3.0.3
+
+info:
+  title: Books
+  description: A simple API where you can register books.
+  contact:
+    email: samuel.araujo.souza@outlook.com
+  version: 1.0.0
+
+externalDocs:
+  description: See the repository
+  url: https://github.com/samuelastech/books-api
+
+servers:
+  - url: https://heroes-vdue.onrender.com
+  - url: http://localhost:3000
+
+tags:
+  - name: Books
+
+paths:
+  /books:
+    get:
+      tags:
+        - Books
+      summary: List all existing books
+      responses:
+        '200':
+          description: Successful listing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Books'
+    
+    post:
+      tags:
+        - Books
+      summary: Add a new book in the list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+        required: true
+      responses:
+        '201':
+          description: Book created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BookId'
+                  - $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid properties
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'The book you are triyng to create is invalid'
+                  invalidProperties:
+                    type: array
+                    items:
+                      type: string
+                      example: author
+    
+  /books/{id}:
+    parameters:
+      - $ref: '#/components/parameters/BookParam'
+    get:
+      tags:
+        - Books
+      summary: List only one book
+      responses:
+        '200':
+          description: Successfull listing
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BookId'
+                  - $ref: '#/components/schemas/Book'
+        
+    patch:
+      tags:
+        - Books
+      summary: Update the properties of a book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBookDTO'
+      responses:
+        '204':
+          description: Book updated successfully
+        '400':
+          description: Invalid properties
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'You must send properties to be updated'
+    
+    delete:
+      tags:
+        - Books
+      summary: Delete a book
+      responses:
+        '204':
+          description: Book deleted successfully
+        '400':
+          description: Invalid properties
+components:
+  parameters:
+    BookParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      example: 1
+  schemas:
+    Book:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Dom Casmurro'
+        author:
+          type: string
+          example: 'Machado de Assis'
+    
+    UpdateBookDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Dom Casmurro'
+        author:
+          type: string
+          example: 'Machado de Assis'
+      oneOf:
+        - required: ["title"]
+        - required: ["author"]
+    
+    BookId:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '1'
+    
+    Books:
+      type: array
+      items:
+        $ref: '#/components/schemas/Book'
