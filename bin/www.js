@@ -4,13 +4,11 @@
  * Module dependencies.
  */
 
+import 'dotenv/config'
 import app from '../app.js';
 import http from 'http';
 import debug from 'debug';
-import { configDotenv } from 'dotenv';
-
-configDotenv();
-debug('books:server');
+const log = debug('books:server');
 
 /**
  * Get port from environment and store in Express.
@@ -89,5 +87,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  log('Listening on ' + bind);
 }
