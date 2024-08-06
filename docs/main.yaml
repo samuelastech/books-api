@@ -12,7 +12,6 @@ externalDocs:
   url: https://github.com/samuelastech/books-api
 
 servers:
-  - url: https://heroes-vdue.onrender.com
   - url: http://localhost:3000
 
 tags:
